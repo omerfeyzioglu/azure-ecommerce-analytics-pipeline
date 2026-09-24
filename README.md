@@ -1,6 +1,6 @@
 # Azure E-Commerce Analytics Pipeline
 
-> **Implementation status:** In progress. The repository foundation, real-data source design, and local source preparation are complete, but no Azure resources, pipeline runs, Synapse queries, or analytical results have been verified yet.
+> **Implementation status:** In progress. The ADLS Gen2 account, `datalake` filesystem, folder structure, and four Landing uploads have been verified. Azure Data Factory and Synapse Serverless SQL have not yet been created or executed.
 
 This project uses the public, anonymized Olist Brazilian e-commerce dataset to demonstrate an Azure-based marketplace analytics pipeline. Four relational source entities are ingested separately, validated, joined into a curated Parquet model, and transformed into business metrics.
 
@@ -89,11 +89,22 @@ Raw Olist CSV files are downloaded locally into `sample_data/` but are ignored b
 
 ## Running the Project
 
-Download the Olist archive from the source page, then extract the four required files into `sample_data/` without renaming or modifying them. Detailed Azure instructions will be completed as each phase is implemented and verified. Azure resources have not yet been created or tested.
+Download the Olist archive from the source page, then extract the four required files into `sample_data/` without renaming or modifying them. The verified Landing upload method uses Azure CLI with Microsoft Entra authentication (`--auth-mode login`); no storage keys or SAS tokens are used. Detailed instructions are maintained in `docs/azure-setup.md`.
+
+## Verified Infrastructure So Far
+
+Verified on 2026-09-24:
+
+- Resource group `rg-ecommerce-analytics-demo` in West Europe
+- Storage account `stecomolistomer260924`: Standard GPv2, LRS, TLS 1.2, HTTPS-only, hierarchical namespace enabled
+- `datalake` filesystem with separate Landing, Bronze, Silver, and Gold directories
+- Four original Olist CSV files uploaded to their Landing directories
+- Azure file sizes match the locally verified source manifest
+- Bronze contains no data yet; it will be populated by Azure Data Factory
 
 ## Results
 
-No Azure execution results are reported yet. This section will contain measured quality counts, Silver validation results, business metrics, and screenshots only after successful runs.
+No ADF or Synapse execution results are reported yet. This section will contain measured quality counts, Silver validation results, business metrics, and screenshots only after successful runs.
 
 ## Cost-Conscious Design
 

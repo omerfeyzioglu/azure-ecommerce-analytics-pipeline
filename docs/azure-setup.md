@@ -1,15 +1,25 @@
 # Azure Setup
 
-Azure setup will be performed interactively after the four local Olist source files are downloaded and inspected.
+## Verified Resources
 
-Planned resources, all in one Azure region:
+Created and verified on 2026-09-24:
 
 - Resource group: `rg-ecommerce-analytics-demo`
-- One ADLS Gen2-compatible storage account with hierarchical namespace enabled
-- One Azure Data Factory instance
-- One Azure Synapse workspace using Serverless SQL only
+- Region: West Europe
+- Storage account: `stecomolistomer260924`
+- Account type: Standard GPv2
+- Redundancy: LRS
+- Hierarchical namespace: enabled
+- HTTPS-only: enabled
+- Minimum TLS version: 1.2
+- Anonymous blob access: disabled
+- Filesystem: `datalake`
 
-Resource names that require global uniqueness will be chosen at creation time. No Azure resource is currently claimed to exist.
+Azure Data Factory and the Synapse workspace have not yet been created.
+
+## Access
+
+The signed-in development user has `Storage Blob Data Contributor` scoped to this storage account. Landing uploads used Microsoft Entra authentication through Azure CLI with `--auth-mode login`. No account key, SAS token, or connection string was used or stored in the repository.
 
 ## Planned Data Lake Paths
 
@@ -31,3 +41,32 @@ Resource names that require global uniqueness will be chosen at creation time. N
 ```
 
 The versioned Silver and Gold paths are intentional because Synapse CETAS does not overwrite a populated destination folder.
+
+The parent directories exist. Versioned `v1` output directories will be created by the transformation process and are not pre-populated.
+
+## Landing Upload
+
+The original source files were uploaded separately with Azure CLI:
+
+```bash
+az storage fs file upload \
+  --source sample_data/olist_orders_dataset.csv \
+  --path landing/orders/olist_orders_dataset.csv \
+  --file-system datalake \
+  --account-name stecomolistomer260924 \
+  --auth-mode login \
+  --overwrite false
+```
+
+The same command pattern was used for order items, customers, and products with their matching paths. This represents the upstream source drop. Azure Data Factory did not produce the Landing files.
+
+## Verified Landing Files
+
+| Azure path | Bytes |
+| --- | ---: |
+| `landing/orders/olist_orders_dataset.csv` | 17,654,914 |
+| `landing/order_items/olist_order_items_dataset.csv` | 15,438,671 |
+| `landing/customers/olist_customers_dataset.csv` | 9,033,957 |
+| `landing/products/olist_products_dataset.csv` | 2,379,446 |
+
+These sizes match `sample_data/source_manifest.json`. Bronze was checked after the upload and contained no files, as expected before the ADF phase.
