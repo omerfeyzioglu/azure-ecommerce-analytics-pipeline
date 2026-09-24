@@ -6,19 +6,7 @@ This project uses the public, anonymized Olist Brazilian e-commerce dataset to d
 
 ## Architecture
 
-The implemented data flow is:
-
-```mermaid
-flowchart TD
-    source[Olist public marketplace dataset] --> landing[ADLS Gen2 Landing<br/>orders, order items, customers, products]
-    landing -->|Parameterized Azure Data Factory pipeline| bronze[ADLS Gen2 Bronze<br/>source-aligned CSV]
-    bronze -->|Synapse Serverless SQL| quality[Schema, relationship<br/>and business-rule checks]
-    quality -->|Validated one-to-many joins| silver[ADLS Gen2 Silver<br/>orders_enriched Parquet]
-    silver -->|Synapse Serverless SQL| gold[ADLS Gen2 Gold<br/>business metrics]
-    gold --> daily[Daily GMV]
-    gold --> category[Category performance]
-    gold --> delivery[Delivery performance]
-```
+![Azure e-commerce analytics architecture](docs/images/architecture-overview.png)
 
 The deployment separates ingestion and analytics: ADF and the project lake stay in West Europe, while Serverless SQL can run from a Synapse workspace in a permitted region and access the lake through managed identity.
 

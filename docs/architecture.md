@@ -2,6 +2,8 @@
 
 The implemented architecture ingests four relational Olist source entities into one ADLS Gen2 filesystem and analyzes them with Synapse Serverless SQL.
 
+![Azure e-commerce analytics architecture](images/architecture-overview.png)
+
 ```text
 Olist CSV files
     -> Landing: orders, order_items, customers, products
