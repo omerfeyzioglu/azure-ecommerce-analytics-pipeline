@@ -26,7 +26,7 @@ Bronze is the platform-controlled raw copy created by the parameterized ADF pipe
 
 Silver contains `orders_enriched` at order-item grain. Each row represents one marketplace order item enriched with order lifecycle, customer, and product attributes. The design preserves the natural one-to-many relationship between orders and items rather than forcing an order-level table.
 
-The planned join path is:
+The join path is:
 
 ```text
 orders.order_id = order_items.order_id
@@ -48,6 +48,6 @@ Order counts use distinct `order_id` values after the one-to-many join. Average 
 
 ## Why Parquet
 
-Parquet is planned for Silver and Gold because its columnar layout and embedded schema suit analytical queries and can reduce the amount of data scanned by Synapse Serverless SQL compared with repeatedly parsing raw CSV.
+The SQL implementation uses Parquet for Silver and Gold because its columnar layout and embedded schema suit analytical queries and can reduce data scanned compared with repeatedly parsing raw CSV.
 
-The executable implementation is maintained in `adf/` and `synapse/`; deterministic acceptance values are maintained in `docs/results.md`.
+The executable implementation is maintained in `adf/` and `synapse/`. The expected validation baseline is maintained in `docs/results.md`; Synapse execution is still pending.

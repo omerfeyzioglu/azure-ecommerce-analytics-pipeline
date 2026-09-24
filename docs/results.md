@@ -1,6 +1,6 @@
-# Validation Baseline
+# Expected Validation Baseline
 
-These deterministic acceptance values were calculated from the same four immutable Olist CSV files used by the pipeline.
+These deterministic acceptance values were calculated locally from the same four immutable Olist CSV files used by the pipeline. They are not Azure Synapse execution results.
 
 | Measure | Expected value |
 | --- | ---: |
@@ -23,3 +23,7 @@ These deterministic acceptance values were calculated from the same four immutab
 All duplicate-key, referential-integrity, invalid-price, negative-freight, unexpected-status, and delivery-before-purchase checks have an expected result of zero.
 
 Top categories by GMV are `beleza_saude` (1,255,695.13 BRL), `relogios_presentes` (1,198,185.21), `cama_mesa_banho` (1,035,964.06), `esporte_lazer` (979,740.92), and `informatica_acessorios` (904,322.02).
+
+## Azure Synapse Execution Results
+
+Pending. Add results here only after the Serverless SQL scripts complete successfully in Azure.

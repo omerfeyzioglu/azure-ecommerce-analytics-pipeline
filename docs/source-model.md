@@ -56,7 +56,7 @@ order_items.product_id = products.product_id
 
 ## Silver Grain
 
-`orders_enriched` has one row per order item. Planned fields are:
+`orders_enriched` has one row per order item. The Silver CETAS defines these fields:
 
 ```text
 order_id

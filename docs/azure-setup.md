@@ -23,7 +23,7 @@ The ADF deployment is independent from Synapse. Serverless SQL may run from anot
 
 The signed-in development user has `Storage Blob Data Contributor` scoped to this storage account. Landing uploads used Microsoft Entra authentication through Azure CLI with `--auth-mode login`. No account key, SAS token, or connection string was used or stored in the repository.
 
-## Planned Data Lake Paths
+## Data Lake Paths
 
 ```text
 /landing/orders/olist_orders_dataset.csv
@@ -89,3 +89,5 @@ The Bronze sizes match Landing. The pipeline has no trigger or recurring schedul
 ## Synapse Serverless
 
 Use the built-in endpoint ending in `-ondemand.sql.azuresynapse.net`, grant the workspace managed identity `Storage Blob Data Contributor` on the `datalake` filesystem, and run the files in `synapse/` in numeric order. No Dedicated SQL Pool or Spark Pool is required.
+
+The SQL layer is implemented in the repository, but a complete successful Synapse execution has not yet been verified.
