@@ -1,0 +1,9 @@
+{
+  "type": "AzureBlobFS",
+  "typeProperties": {
+    "url": "https://stecomolistomer260924.dfs.core.windows.net"
+  },
+  "annotations": [
+    "Uses the Data Factory system-assigned managed identity"
+  ]
+}

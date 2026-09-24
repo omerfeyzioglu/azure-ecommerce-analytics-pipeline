@@ -14,8 +14,10 @@ Created and verified on 2026-09-24:
 - Minimum TLS version: 1.2
 - Anonymous blob access: disabled
 - Filesystem: `datalake`
+- Data Factory: `adf-ecommerce-olist-260924`
+- Data Factory identity: system-assigned managed identity
 
-Azure Data Factory and the Synapse workspace have not yet been created.
+The Data Factory is active. The Synapse workspace has not yet been created.
 
 ## Access
 
@@ -70,3 +72,16 @@ The same command pattern was used for order items, customers, and products with 
 | `landing/products/olist_products_dataset.csv` | 2,379,446 |
 
 These sizes match `sample_data/source_manifest.json`. Bronze was checked after the upload and contained no files, as expected before the ADF phase.
+
+## Data Factory Ingestion
+
+`pl_ingest_olist_files` was deployed with one parameterized Binary Copy Activity. Four manual runs succeeded on 2026-09-24 and created these Bronze files:
+
+| Azure path | Bytes |
+| --- | ---: |
+| `bronze/orders/olist_orders_dataset.csv` | 17,654,914 |
+| `bronze/order_items/olist_order_items_dataset.csv` | 15,438,671 |
+| `bronze/customers/olist_customers_dataset.csv` | 9,033,957 |
+| `bronze/products/olist_products_dataset.csv` | 2,379,446 |
+
+The Bronze sizes match Landing. The pipeline has no trigger or recurring schedule.

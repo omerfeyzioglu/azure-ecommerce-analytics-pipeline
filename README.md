@@ -1,6 +1,6 @@
 # Azure E-Commerce Analytics Pipeline
 
-> **Implementation status:** In progress. The ADLS Gen2 account, `datalake` filesystem, folder structure, and four Landing uploads have been verified. Azure Data Factory and Synapse Serverless SQL have not yet been created or executed.
+> **Implementation status:** In progress. ADLS Gen2 Landing and the parameterized Azure Data Factory ingestion pipeline have been verified with four successful runs. Synapse Serverless SQL has not yet been created or executed.
 
 This project uses the public, anonymized Olist Brazilian e-commerce dataset to demonstrate an Azure-based marketplace analytics pipeline. Four relational source entities are ingested separately, validated, joined into a curated Parquet model, and transformed into business metrics.
 
@@ -57,7 +57,9 @@ Planned checks cover source-key uniqueness, expected item-level composite keys, 
 
 ## Azure Data Factory
 
-The planned `pl_ingest_olist_files` pipeline will use `source_folder`, `file_name`, and `target_folder` parameters to reuse one Copy Activity across the selected source files. ADLS Gen2 access will use managed identity authentication. Its definition and execution evidence will be added only after successful manual runs.
+The verified `pl_ingest_olist_files` pipeline uses `source_folder`, `file_name`, and `target_folder` parameters to reuse one Copy Activity across the selected source files. A Binary dataset preserves each source file without parsing or reserializing it. The Data Factory system-assigned managed identity accesses ADLS Gen2 with `Storage Blob Data Contributor`; no key or SAS token is used.
+
+Four manual runs succeeded on 2026-09-24. Each Bronze output matches its Landing input byte-for-byte in size. No trigger or recurring schedule is enabled.
 
 ## Synapse Serverless SQL
 
@@ -100,11 +102,13 @@ Verified on 2026-09-24:
 - `datalake` filesystem with separate Landing, Bronze, Silver, and Gold directories
 - Four original Olist CSV files uploaded to their Landing directories
 - Azure file sizes match the locally verified source manifest
-- Bronze contains no data yet; it will be populated by Azure Data Factory
+- Data Factory `adf-ecommerce-olist-260924` with a system-assigned managed identity
+- Parameterized `pl_ingest_olist_files` pipeline with one Binary Copy Activity
+- Four successful manual ADF runs populated the matching Bronze directories
 
 ## Results
 
-No ADF or Synapse execution results are reported yet. This section will contain measured quality counts, Silver validation results, business metrics, and screenshots only after successful runs.
+ADF ingestion succeeded for orders, order items, customers, and products. Synapse quality counts, Silver validation, business metrics, and screenshots will be added only after those steps run successfully.
 
 ## Cost-Conscious Design
 
