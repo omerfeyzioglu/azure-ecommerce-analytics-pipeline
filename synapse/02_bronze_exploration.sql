@@ -1,0 +1,4 @@
+/*
+Planned Bronze CSV exploration using OPENROWSET with an explicit schema.
+Implementation and verified results will be added in the Synapse Bronze phase.
+*/
