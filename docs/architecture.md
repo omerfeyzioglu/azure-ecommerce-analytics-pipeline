@@ -1,6 +1,6 @@
 # Architecture
 
-The planned architecture ingests four relational Olist source entities into one ADLS Gen2 filesystem.
+The implemented architecture ingests four relational Olist source entities into one ADLS Gen2 filesystem and analyzes them with Synapse Serverless SQL.
 
 ```text
 Olist CSV files
@@ -48,4 +48,4 @@ Order counts use distinct `order_id` values after the one-to-many join. Average 
 
 Parquet is planned for Silver and Gold because its columnar layout and embedded schema suit analytical queries and can reduce the amount of data scanned by Synapse Serverless SQL compared with repeatedly parsing raw CSV.
 
-This document describes the design only. Azure deployment and execution have not yet been verified.
+The executable implementation is maintained in `adf/` and `synapse/`; deterministic acceptance values are maintained in `docs/results.md`.

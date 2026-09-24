@@ -1,8 +1,8 @@
 # Cost and Cleanup
 
-The project is designed around Synapse Serverless SQL and only four source entities from the Olist dataset. It intentionally avoids Dedicated SQL Pools, Spark Pools, ADF Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints. Resources will share one region, source files remain small enough for an MVP, and ADF runs will be limited to required verification.
+The project is designed around Synapse Serverless SQL and only four source entities from the Olist dataset. It intentionally avoids Dedicated SQL Pools, Spark Pools, ADF Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints. Source files remain small enough for an MVP, and ADF runs are limited to required verification.
 
-The resource group, Standard LRS storage account, and Data Factory are now active. Four small manual Copy Activity runs were executed; no trigger or recurring schedule is enabled. Synapse has not yet been created. Review actual spend in Azure Cost Management rather than assuming promotional credit remains.
+Four small manual Copy Activity runs were executed and no trigger or recurring schedule is enabled. The Synapse implementation uses only the built-in Serverless SQL endpoint. Review actual spend in Azure Cost Management rather than assuming promotional credit remains.
 
 ## Cleanup Checklist
 
@@ -17,4 +17,4 @@ After the project has been executed and documented:
 7. Confirm its resources are gone.
 8. Check Azure Cost Management for unexpected charges.
 
-No cleanup is required yet because no Azure resources have been created during Phase 1.
+Deleting every project resource group after evidence is captured is the safest way to stop recurring storage and control-plane costs. Also verify that no SQL or Spark pools, triggers, private endpoints, or managed resource groups remain.

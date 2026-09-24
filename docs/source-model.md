@@ -104,7 +104,7 @@ A read-only local inspection verified that the four downloaded files match the c
 | Delivery timestamp earlier than purchase timestamp | 0 |
 | Rows with an unexpected order status | 0 |
 
-These results are source-preparation checks only. The SQL quality script will calculate the authoritative project results in Synapse Serverless SQL, and the README Results section will not present them as Azure evidence until that query succeeds.
+These deterministic results are the acceptance baseline for the equivalent Serverless SQL quality checks in `synapse/03_data_quality.sql`.
 
 ## Aggregation Rules
 
@@ -115,4 +115,4 @@ These results are source-preparation checks only. The SQL quality script will ca
 - Average order value: GMV divided by distinct order count.
 - Late delivery: `order_delivered_customer_date > order_estimated_delivery_date` for delivered orders with both dates present.
 
-Authoritative Azure quality results will be added only after the Serverless SQL queries have been executed successfully.
+The complete expected output baseline is documented in `docs/results.md`.

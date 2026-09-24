@@ -17,7 +17,7 @@ Created and verified on 2026-09-24:
 - Data Factory: `adf-ecommerce-olist-260924`
 - Data Factory identity: system-assigned managed identity
 
-The Data Factory is active. The Synapse workspace has not yet been created.
+The ADF deployment is independent from Synapse. Serverless SQL may run from another permitted region while reading and writing this West Europe lake through its managed identity.
 
 ## Access
 
@@ -85,3 +85,7 @@ These sizes match `sample_data/source_manifest.json`. Bronze was checked after t
 | `bronze/products/olist_products_dataset.csv` | 2,379,446 |
 
 The Bronze sizes match Landing. The pipeline has no trigger or recurring schedule.
+
+## Synapse Serverless
+
+Use the built-in endpoint ending in `-ondemand.sql.azuresynapse.net`, grant the workspace managed identity `Storage Blob Data Contributor` on the `datalake` filesystem, and run the files in `synapse/` in numeric order. No Dedicated SQL Pool or Spark Pool is required.
