@@ -6,7 +6,7 @@ This project uses the public, anonymized Olist Brazilian e-commerce dataset to d
 
 ## Architecture
 
-![Azure e-commerce analytics architecture](docs/images/architecture-overview-v2.png)
+![Azure e-commerce analytics architecture](docs/images/architecture-overview-transparent.png)
 
 The deployment separates ingestion and analytics: ADF and the project lake stay in West Europe, while Serverless SQL can run from a Synapse workspace in a permitted region and access the lake through managed identity.
 
