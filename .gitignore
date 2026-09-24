@@ -39,3 +39,11 @@ temp/
 # Generated exports that may contain credentials
 *.publishsettings
 *.bacpac
+
+# Third-party Olist source data (download locally; do not commit)
+/sample_data/olist_orders_dataset.csv
+/sample_data/olist_order_items_dataset.csv
+/sample_data/olist_customers_dataset.csv
+/sample_data/olist_products_dataset.csv
+/sample_data/olist_order_payments_dataset.csv
+/sample_data/*.zip

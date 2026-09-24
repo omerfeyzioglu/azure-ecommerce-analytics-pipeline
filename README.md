@@ -1,8 +1,8 @@
 # Azure E-Commerce Analytics Pipeline
 
-> **Implementation status:** In progress. The local repository foundation is in place, but no Azure resources, pipeline runs, Synapse queries, or analytical results have been verified yet.
+> **Implementation status:** In progress. The repository foundation, real-data source design, and local source preparation are complete, but no Azure resources, pipeline runs, Synapse queries, or analytical results have been verified yet.
 
-A small, reproducible portfolio project that follows an e-commerce order file from an upstream landing area through Azure Data Factory ingestion, Synapse Serverless SQL validation and transformation, and business-facing analytical datasets in Azure Data Lake Storage Gen2.
+This project uses the public, anonymized Olist Brazilian e-commerce dataset to demonstrate an Azure-based marketplace analytics pipeline. Four relational source entities are ingested separately, validated, joined into a curated Parquet model, and transformed into business metrics.
 
 ## Architecture
 
@@ -10,13 +10,14 @@ The planned data flow is:
 
 ```mermaid
 flowchart TD
-    source[Synthetic e-commerce orders] --> landing[ADLS Gen2 Landing<br/>upstream file drop]
-    landing -->|Azure Data Factory| bronze[ADLS Gen2 Bronze<br/>raw CSV]
-    bronze -->|Synapse Serverless SQL| quality[Data-quality checks<br/>typing and deduplication]
-    quality --> silver[ADLS Gen2 Silver<br/>curated Parquet]
+    source[Olist public marketplace dataset] --> landing[ADLS Gen2 Landing<br/>orders, order items, customers, products]
+    landing -->|Parameterized Azure Data Factory pipeline| bronze[ADLS Gen2 Bronze<br/>source-aligned CSV]
+    bronze -->|Synapse Serverless SQL| quality[Schema, relationship<br/>and business-rule checks]
+    quality -->|Validated one-to-many joins| silver[ADLS Gen2 Silver<br/>orders_enriched Parquet]
     silver -->|Synapse Serverless SQL| gold[ADLS Gen2 Gold<br/>business metrics]
     gold --> daily[Daily GMV]
     gold --> category[Category performance]
+    gold --> delivery[Delivery performance]
 ```
 
 This diagram describes the intended architecture. It is not evidence of a successful Azure execution.
@@ -31,34 +32,40 @@ The project demonstrates how familiar data-engineering patterns—raw ingestion,
 - Azure Data Lake Storage Gen2 for Landing, Bronze, Silver, and Gold data
 - Azure Synapse Analytics Serverless SQL for validation, transformation, and analytics
 - SQL for data processing
-- Python standard library for deterministic synthetic data generation
 - Git and GitHub for version control and project evidence
 
 ## Data Flow
 
-The planned flow starts with a synthetic CSV uploaded to Landing. Azure Data Factory will copy it unchanged to Bronze. Synapse Serverless SQL will inspect quality failures, remove invalid and duplicate records, and write Silver as Parquet. Business queries will read Silver and produce daily GMV and category-level metrics, with at least one result materialized in Gold.
+The planned flow starts with four original Olist CSV files uploaded to separate Landing folders. A reusable ADF pipeline will copy each file unchanged to its matching Bronze folder. Synapse Serverless SQL will inspect schema, key, referential-integrity, null, and business-rule issues before joining the sources into an item-grain Silver Parquet dataset. Gold queries will produce daily GMV, category performance, and delivery performance.
 
 ## Dataset
 
-The dataset will contain approximately 10,000 synthetic e-commerce order rows. A fixed random seed will make generation reproducible. A small, controlled set of duplicate IDs, missing customers, invalid quantities, and negative prices will be injected so the quality checks have real failures to detect.
+The MVP uses these files from the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce):
 
-No proprietary data is used.
+- `olist_orders_dataset.csv`: approximately one row per order
+- `olist_order_items_dataset.csv`: one or more item rows per order
+- `olist_customers_dataset.csv`: customer and location attributes
+- `olist_products_dataset.csv`: product and category attributes
+
+The dataset is anonymized and published under CC BY-NC-SA 4.0. Raw files are kept unchanged, stored locally, and excluded from Git to keep third-party data separate from this MIT-licensed code repository. No artificial quality failures are injected.
+
+A local read-only preflight confirmed `99,441` orders, `112,650` order items, `99,441` customer rows, and `32,951` products. These counts verify source preparation only; they are not Synapse execution evidence.
 
 ## Data Quality
 
-Planned checks include duplicate and null order IDs, null customer IDs, non-positive quantities, negative prices, invalid statuses, row count, and date range. Actual failure counts will be added only after the SQL has run successfully.
+Planned checks cover source-key uniqueness, expected item-level composite keys, referential integrity between the four entities, required-field nulls, non-positive prices, negative freight, unexpected statuses, and invalid delivery timestamps. A zero-failure result is valid. Actual counts will be added only after the Serverless SQL checks run successfully.
 
 ## Azure Data Factory
 
-The planned `pl_ingest_orders` pipeline will copy `landing/orders/orders.csv` to `bronze/orders/orders.csv` using ADLS Gen2 datasets and managed identity authentication. Its definition and execution evidence will be added after a successful manual run.
+The planned `pl_ingest_olist_files` pipeline will use `source_folder`, `file_name`, and `target_folder` parameters to reuse one Copy Activity across the selected source files. ADLS Gen2 access will use managed identity authentication. Its definition and execution evidence will be added only after successful manual runs.
 
 ## Synapse Serverless SQL
 
-Serverless SQL will read Bronze CSV with an explicit schema, run data-quality checks, and create a validated, deduplicated Silver Parquet dataset with CETAS. No Dedicated SQL Pool or Spark Pool is part of this project.
+Serverless SQL will read each Bronze CSV with an explicit schema, run data-quality checks, and create `silver/orders_enriched/` as Parquet with CETAS. The Silver model is at order-item grain and joins orders to customers, items, and products. No Dedicated SQL Pool or Spark Pool is part of this project.
 
 ## Business Metrics
 
-Planned outputs are daily GMV, order volume, unique customers, average order value, category performance, and an optional status distribution. Revenue will include `PAID`, `SHIPPED`, and `DELIVERED` orders; `CANCELLED` orders will be excluded.
+Planned outputs are daily GMV, category performance, and delivery performance. GMV is `SUM(price)` at item grain; freight is excluded. Order counts use `COUNT(DISTINCT order_id)` so multi-item orders are not double-counted. Commercial metrics will exclude cancelled orders. Actual results will be documented only after execution.
 
 ## Repository Structure
 
@@ -67,20 +74,22 @@ azure-ecommerce-analytics-pipeline/
 ├── README.md
 ├── .gitignore
 ├── requirements.txt
-├── src/
 ├── sample_data/
+│   ├── README.md
+│   └── source_manifest.json
 ├── adf/
 │   └── pipeline/
 ├── synapse/
 └── docs/
+    ├── source-model.md
     └── screenshots/
 ```
 
-Files for the generator, Azure artifacts, SQL scripts, and detailed documentation will be added in their implementation phases.
+Raw Olist CSV files are downloaded locally into `sample_data/` but are ignored by Git. Azure artifacts, executable SQL, results, and screenshots will be added in their implementation phases.
 
 ## Running the Project
 
-Detailed, reproducible instructions will be added as each phase is implemented and verified. Azure resources have not yet been created or tested.
+Download the Olist archive from the source page, then extract the four required files into `sample_data/` without renaming or modifying them. Detailed Azure instructions will be completed as each phase is implemented and verified. Azure resources have not yet been created or tested.
 
 ## Results
 
@@ -88,7 +97,7 @@ No Azure execution results are reported yet. This section will contain measured 
 
 ## Cost-Conscious Design
 
-The design deliberately uses a few-megabyte dataset, Synapse Serverless SQL, one brief ADF pipeline run per required test, and a single Azure region. It excludes Dedicated SQL Pools, Spark Pools, Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints.
+The design uses only four source entities from the public dataset, Synapse Serverless SQL, limited ADF runs, and a single Azure region. It excludes Dedicated SQL Pools, Spark Pools, Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints.
 
 ## Security
 

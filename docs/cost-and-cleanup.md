@@ -1,6 +1,6 @@
 # Cost and Cleanup
 
-The project is designed around Synapse Serverless SQL and a dataset of only a few megabytes. It intentionally avoids Dedicated SQL Pools, Spark Pools, ADF Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints. Resources will share one region, and ADF runs will be limited to required verification.
+The project is designed around Synapse Serverless SQL and only four source entities from the Olist dataset. It intentionally avoids Dedicated SQL Pools, Spark Pools, ADF Mapping Data Flows, VMs, managed virtual networks, and unnecessary private endpoints. Resources will share one region, source files remain small enough for an MVP, and ADF runs will be limited to required verification.
 
 ## Cleanup Checklist
 
